@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaDatabaseConsumer {
 
-    WikiMediaDataRepositoty wikiMediaDataRepositoty;
+    WikiMediaDataRepositoty wikiMediaDataRepository;
 
-    public KafkaDatabaseConsumer(WikiMediaDataRepositoty wikiMediaDataRepositoty)
+    public KafkaDatabaseConsumer(WikiMediaDataRepositoty wikiMediaDataRepository)
     {
-        this.wikiMediaDataRepositoty=wikiMediaDataRepositoty;
+        this.wikiMediaDataRepository =wikiMediaDataRepository;
     }
 
     @KafkaListener(topics="wikimedia_topic", groupId = "kafka-wiki-consumer-group")
@@ -30,7 +30,7 @@ public class KafkaDatabaseConsumer {
         WikiMediaData wikiMediaData= new WikiMediaData();
         eventMessage=eventMessage.length()>100?eventMessage.substring(0,100):eventMessage;
         wikiMediaData.setWikiData(eventMessage);
-        wikiMediaDataRepositoty.save(wikiMediaData);
+        wikiMediaDataRepository.save(wikiMediaData);
 
     }
 }

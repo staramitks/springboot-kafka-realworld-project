@@ -10,6 +10,9 @@ import com.launchdarkly.eventsource.EventHandler;
 import com.launchdarkly.eventsource.MessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class WikimediaChangeHandler implements EventHandler {
@@ -32,14 +35,27 @@ public WikimediaChangeHandler(KafkaTemplate<String,String> kafkaTemplate, String
 
     @Override
     public void onClosed() throws Exception {
-
+        kafkaTemplate.destroy();
     }
+
 
     @Override
     public void onMessage(String s, MessageEvent messageEvent) throws Exception {
 
     log.info(String.format("Event Data -> %s ",messageEvent.getData().substring(50,100)) );
-    kafkaTemplate.send(topicName,messageEvent.getData().substring(0,10));
+        final CompletableFuture<SendResult<String, String>> sendFuture = kafkaTemplate.send(topicName, messageEvent.getData().substring(0, 10));
+        sendFuture.whenComplete((result, ex) -> {
+            if (ex == null) {
+                handleSuccess(messageEvent.getData());
+            }
+            else {
+                System.out.println("Exception while sending message "+ex);
+            }
+        });
+    }
+
+    private void handleSuccess(String data) {
+        System.out.println("Success while sending message "+data);
     }
 
     @Override
@@ -49,6 +65,6 @@ public WikimediaChangeHandler(KafkaTemplate<String,String> kafkaTemplate, String
 
     @Override
     public void onError(Throwable throwable) {
-
+    log.error("Error encountered ",throwable);
     }
 }
