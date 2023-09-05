@@ -9,6 +9,7 @@ For further reference, please consider the following sections:
  - C:\Amit\Softwares\kafka_2.13-3.5.0>kafka-console-consumer.bat --topic wikimedia_topic --from-beginning --bootstrap-server localhost:9092
  - Reads from wikimedia and uploads data in the DB table index.wikimedia_changes
  - https://docs.spring.io/spring-kafka/reference/html/#preface
+ - https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
 
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
